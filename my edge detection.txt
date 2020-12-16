@@ -1,0 +1,41 @@
+from helper_functions import *
+
+#THIS IS THE FOLDER WHERE OUR IMAGE EXISTS
+datafolder = r"C:/Users/LENOVO/Desktop/images/"
+imgpath = datafolder + "5.jpg"
+#HERE THE CODE WILL START
+#image convert to grayscale
+pixel_values = read_colorimg(imgpath)
+numb_rows = len(pixel_values) - 2
+numb_colns = len(pixel_values[0]) - 2
+#I WRITTEN MY CODE HERE
+# to store updated pixel information
+new_pixel_values= [[0 for a in range(numb_colns)] for b in range(numb_rows)]
+# Define the 3 x 3 mask 
+mask = ((-1,0,1), (-2,0,2), (-1,0,1))
+# create a function to slice a part from the image 
+def get_slice_2d_list(cursor_pixel,cursor_location1,cursor_location2):
+    #here we are splicing neighbour pixels values from pixel_values
+    z=[p[cursor_location2-1:cursor_location2+2] for p in cursor_pixel[cursor_location1-1:cursor_location1+2]]
+    return z
+
+# create a function to flatten a 2D list 
+def flatten(flat_list):
+    y=[b for a in flat_list for b in a]
+    return y
+for r in range(1,numb_rows+1): # For each of the pixel values, excluding the boundary values
+    for c in range(1,numb_colns+1):
+    # Create little local 3x3 box using list slicing
+        neighbour_pixels = get_slice_2d_list(pixel_values,r,c)
+        pix=flatten(neighbour_pixels)
+        msk=flatten(mask)
+        mult_result =list(map(lambda x, y: x*y, pix, msk))
+        way=0
+        for i in range(0,len(mult_result)):
+            way=way+mult_result[i]
+        new_pixel_values[r-1][c-1]=way
+#----------------------------------------END YOUR CODE HERE----------------------------------------
+# Verify your result
+verify_result(pixel_values, new_pixel_values, mask)
+# View the original image and the edges of the image
+view_images(imgpath, new_pixel_values)

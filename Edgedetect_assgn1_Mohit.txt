@@ -1,0 +1,52 @@
+from helper_functions import *
+
+#-----------------------FILL IN THE FOLDER WHERE YOUR IMAGE EXISTS--------------------------
+datafolder = "C:/Users/raobk/Desktop/assgn1code/images/"
+imgpath = datafolder + "1.jpg" 
+#----------------------------------------STARTER CODE----------------------------------------
+# Convert the color image to grayscale and returns the grayscale pixels 
+pixel_values = read_colorimg(imgpath)
+# The returned pixel values INCLUDE 2 boundary rows and 2 boundary colns. Therefore,
+numb_rows = len(pixel_values) - 2
+numb_colns = len(pixel_values[0]) - 2
+#
+#----------------------------------------WRITE YOUR CODE HERE----------------------------------------
+# Create a data structure to store updated pixel information
+new_pixel_values = [[0 for j in range(numb_colns)] for i in range(numb_rows)]
+# Define the 3 x 3 mask as a tuple of tuples
+mask_2d_tuple = ((-1,-1,-1),(-1,8,-1),(-1,-1,-1))
+
+
+
+# Implement a function to slice a part from the image as a 2D list
+def get_slice_2d_list(pixel_values_list,current_row_iterator,current_cols_iterator):
+    #Slicing the 3*3 sublist from the pixel_values
+    sub_list=[slice_2d[current_cols_iterator-1:current_cols_iterator+2] for slice_2d in pixel_values_list[current_row_iterator-1:current_row_iterator+2]]
+    return sub_list
+
+# Implement a function to flatten a 2D list or a 2D tuple
+def flatten(givenlist):
+    flatting=[j for i in givenlist for j in i]
+    return flatting
+
+
+for rows in range(1,numb_rows+1):
+    for columns in range(1,numb_colns+1):
+        neighbor_pixels=get_slice_2d_list(pixel_values,rows,columns)
+        mask1=flatten(mask_2d_tuple)
+        pixels1=flatten(neighbor_pixels)
+        mult_result = map(lambda x,y: x * y,mask1,pixels1)
+        summation=sum(list(mult_result))
+        new_pixel_values[rows-1][columns-1]=summation
+
+
+# For each of the pixel values, excluding the boundary values
+# Create little local 3x3 box using list slicing
+# Apply the mask      
+# Sum all the multiplied values and set the new pixel value
+#        
+#----------------------------------------END YOUR CODE HERE----------------------------------------
+# Verify your result
+verify_result(pixel_values, new_pixel_values, mask_2d_tuple)
+# View the original image and the edges of the image
+view_images(imgpath, new_pixel_values)
